@@ -12,24 +12,12 @@
         "reg": "npm set registry https://npm.lumigame.com",
         "stats": "nodemon --es-module-specifier-resolution=node --watch ./tests ./tests/result-statistic.js"
     },
-    "jest": {
-        "transform": {
-            "^.+\\.jsx?$": "babel-jest"
-        }
-    },
     "author": "pentagon",
     "license": "ISC",
     "type": "module",
     "dependencies": {
-        "amqplib": "^0.6.0",
-        "body-parser": "^1.19.0",
-        "express": "^4.17.1",
-        "helmet": "^3.23.3",
-        "lodash": "^4.17.19",
         "lodash.findindex": "^4.6.0",
         "lodash.sortby": "^4.7.0",
-        "moment": "^2.29.0",
-        "morgan": "^1.10.0",
         "sc-game-base": "4.0.0",
         "d3-array": "^3.2.0",
         "random-js": "^2.1.0"

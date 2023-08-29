@@ -10,7 +10,7 @@ export const generateResult = (dealerCards, decks, isUpCard) => {
         return { result: dealerCards, settlementResult };
     }
 
-    while (settlementResult < constants.minDealerHand) {
+    while (settlementResult < constants.minDealerHand && dealerCards.length < constants.maxCardsOnHand) {
         dealerCards.push(decks.shift());
         settlementResult = calculateFinalValue(dealerCards);
     }
@@ -22,23 +22,19 @@ export const settle = (dealerCards, bet, odds) => {
     const totalHandValue = calculateFinalValue(bet.cards);
     const totalOfDealer = calculateFinalValue(dealerCards);
 
-    if (isPontoon(bet.cards)) {
-        return isPontoon(dealerCards) ? 1 : odds[gameSettings.payouts.pontoon];
-    }
-
-    if (isFiveCardTrick(bet.cards)) {
-        return isPontoon(dealerCards) ? 0 : odds[gameSettings.payouts.fiveCardTrick];
-    }
-
-    if (isBust(bet.cards)) {
+    if (isPontoon(dealerCards) || isBust(bet.cards)) {
         return 0;
     }
 
-    if (isBust(dealerCards)) {
-        return odds[gameSettings.payouts.regular];
+    if (isPontoon(bet.cards)) {
+        return odds[gameSettings.payouts.pontoon];
     }
 
-    return totalHandValue > totalOfDealer ? odds[gameSettings.payouts.regular] : 0;
+    if (isFiveCardTrick(bet.cards)) {
+        return isFiveCardTrick(dealerCards) ? 0 : odds[gameSettings.payouts.fiveCardTrick];
+    }
+
+    return isBust(dealerCards) || totalHandValue > totalOfDealer ? odds[gameSettings.payouts.regular] : 0;
 };
 
 export const isSplitted = (bet) => {

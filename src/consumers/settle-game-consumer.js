@@ -59,7 +59,6 @@ export default class SettleGameConsumer extends Core.BaseEventConsumers.SettleGa
 
                     bet.betwin = betResult.totalWin;
                     bet.paid = true;
-                    bet.result = betResult.result;
                     bet.softPoints = [];
 
                     await bet.save();

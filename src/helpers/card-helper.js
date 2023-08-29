@@ -41,7 +41,7 @@ export const isPontoon = (cards) => {
 };
 
 export const isFiveCardTrick = (cards) => {
-    return cards.length === 5 && calculateFinalValue(cards) <= constants.pontoon;
+    return cards.length === constants.maxCardsOnHand && calculateFinalValue(cards) <= constants.pontoon;
 };
 
 export const isBust = (cards) => {

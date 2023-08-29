@@ -10,6 +10,6 @@ module.exports = async () => {
         ],
         testEnvironment: "node",
         testResultsProcessor: "jest-sonar-reporter",
-        setupFilesAfterEnv: ["jest-extended"],
+        setupFilesAfterEnv: ["jest-extended/all"],
     };
 };

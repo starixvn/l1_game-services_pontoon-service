@@ -1,5 +1,5 @@
 export default {
-    id: 23,
+    id: 72,
     name: "Pontoon",
     durations: {
         wholeAction: 60,

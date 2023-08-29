@@ -1,11 +1,10 @@
-import { generateDecks } from "../deck-helper";
 import Chance from "chance";
 import { cards } from "../../card";
-import * as _ from "lodash";
+import { generateDecks } from "../deck-helper";
 
 describe("deckHelper", () => {
     describe("generateDeck", () => {
-        const deck = [...cards, ...cards, ...cards, ...cards, ...cards, ...cards];
+        const deck = [...cards, ...cards, ...cards, ...cards, ...cards, ...cards, ...cards, ...cards];
         const chance = new Chance();
 
         const testCases = [
