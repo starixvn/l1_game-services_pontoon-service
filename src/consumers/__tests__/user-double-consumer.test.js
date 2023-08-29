@@ -184,6 +184,58 @@ describe("validation test", () => {
         expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
     });
 
+    it("hand main has split action, return correct error", async () => {
+        const payload = {
+            double: {
+                id: 9237064,
+            },
+        };
+
+        const hand = {
+            isStand: false,
+            actions: [gameSettings.actions.split],
+            id: 9237064,
+        };
+
+        const hand2 = {
+            isStand: false,
+            actions: [],
+            id: 9237066,
+            splitFrom: 9237064,
+        };
+
+        const ingamePlayer = mockInGamePlayer();
+        gameData.ingame[player.profile.name] = ingamePlayer;
+        ingamePlayer.betTracks.hands.push(hand, hand2);
+
+        const result = await consumer.composeActionValidationCriteria(player, payload);
+
+        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
+    });
+
+    it("hand is extra, return correct error", async () => {
+        const payload = {
+            double: {
+                id: 9237066,
+            },
+        };
+
+        const hand2 = {
+            isStand: false,
+            actions: [],
+            id: 9237066,
+            splitFrom: 9237064,
+        };
+
+        const ingamePlayer = mockInGamePlayer();
+        gameData.ingame[player.profile.name] = ingamePlayer;
+        ingamePlayer.betTracks.hands = [hand2];
+
+        const result = await consumer.composeActionValidationCriteria(player, payload);
+
+        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
+    });
+
     it("invalid hand id, return correct error", async () => {
         const payload = {
             double: {
