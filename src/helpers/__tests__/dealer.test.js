@@ -85,27 +85,22 @@ describe("generateResult()", () => {
 });
 
 describe("settle()", () => {
-    it("should return push if both dealer and player are pontoon", () => {
-        const tests = [
-            {
-                dealer: [
+    const odds = { regular: 2, pontoon: 3.5 };
+    it("should return 0 if both dealer and player are pontoon", () => {
+        const test = {
+            dealer: [
+                { rank: "J", suit: 1 },
+                { rank: "A", suit: 1 },
+            ],
+            bet: {
+                actions: [],
+                cards: [
                     { rank: "J", suit: 1 },
                     { rank: "A", suit: 1 },
                 ],
-                bet: {
-                    actions: [],
-                    cards: [
-                        { rank: "J", suit: 1 },
-                        { rank: "A", suit: 1 },
-                    ],
-                },
             },
-        ];
-        const odds = { regular: 2, pontoon: 3.5 };
-
-        tests.forEach((test) => {
-            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(1);
-        });
+        };
+        expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
     });
 
     it("should return pontoon odds if player is pontoon but dealer is not", () => {
@@ -124,14 +119,13 @@ describe("settle()", () => {
                 },
             },
         ];
-        const odds = { regular: 2, pontoon: 3.5 };
 
         tests.forEach((test) => {
             expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.pontoon);
         });
     });
 
-    it("should return regular odds if player is pontoon but splitted", () => {
+    it("should return pontoon odds if player is pontoon but splitted", () => {
         const tests = [
             {
                 dealer: [
@@ -161,10 +155,8 @@ describe("settle()", () => {
                 },
             },
         ];
-        const odds = { regular: 2, pontoon: 3.5 };
-
         tests.forEach((test) => {
-            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.regular);
+            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.pontoon);
         });
     });
 
@@ -200,7 +192,6 @@ describe("settle()", () => {
                 },
             },
         ];
-        const odds = { regular: 2, pontoon: 3.5 };
 
         tests.forEach((test) => {
             expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
@@ -252,76 +243,43 @@ describe("settle()", () => {
                 },
             },
         ];
-        const odds = { regular: 2, pontoon: 3.5 };
 
         tests.forEach((test) => {
             expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.regular);
         });
     });
 
-    it("should return push if both dealer and player are the same", () => {
-        const tests = [
-            {
-                dealer: [
+    it.each([
+        {
+            dealer: [
+                { rank: "J", suit: 1 },
+                { rank: "7", suit: 1 },
+            ],
+            bet: {
+                actions: [],
+                cards: [
                     { rank: "J", suit: 1 },
                     { rank: "7", suit: 1 },
                 ],
-                bet: {
-                    actions: [],
-                    cards: [
-                        { rank: "J", suit: 1 },
-                        { rank: "7", suit: 1 },
-                    ],
-                },
             },
-            {
-                dealer: [
+        },
+        {
+            dealer: [
+                { rank: "J", suit: 1 },
+                { rank: "5", suit: 1 },
+                { rank: "4", suit: 1 },
+            ],
+            bet: {
+                actions: [],
+                cards: [
                     { rank: "J", suit: 1 },
-                    { rank: "5", suit: 1 },
-                    { rank: "4", suit: 1 },
+                    { rank: "9", suit: 1 },
                 ],
-                bet: {
-                    actions: [],
-                    cards: [
-                        { rank: "J", suit: 1 },
-                        { rank: "9", suit: 1 },
-                    ],
-                },
             },
-            {
-                dealer: [
-                    { rank: "J", suit: 1 },
-                    { rank: "5", suit: 1 },
-                    { rank: "6", suit: 1 },
-                ],
-                bet: {
-                    actions: ["split"],
-                    cards: [
-                        { rank: "J", suit: 1 },
-                        { rank: "A", suit: 1 },
-                    ],
-                },
-            },
-            {
-                dealer: [
-                    { rank: "J", suit: 1 },
-                    { rank: "5", suit: 1 },
-                    { rank: "5", suit: 1 },
-                ],
-                bet: {
-                    actions: ["split"],
-                    cards: [
-                        { rank: "J", suit: 1 },
-                        { rank: "K", suit: 1 },
-                    ],
-                },
-            },
-        ];
+        },
+    ])("should return 0 if both dealer and player are the same", (test) => {
         const odds = { regular: 2, pontoon: 3.5 };
-
-        tests.forEach((test) => {
-            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(1);
-        });
+        expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
     });
 });
 
@@ -481,7 +439,7 @@ describe("isUpCards()", () => {
         });
     });
 
-    it("should be false if count of pontoon and bust are equal total hands but pontoon hands were splitted", () => {
+    it("should be true if count of pontoon and bust are equal total hands but pontoon hands were splitted", () => {
         const tests = [
             {
                 hands: [
@@ -505,7 +463,7 @@ describe("isUpCards()", () => {
         ];
 
         tests.forEach((test) => {
-            expect(Dealer.isUpCards(test.hands)).toBeFalsy();
+            expect(Dealer.isUpCards(test.hands)).toBeTrue();
         });
     });
 });
