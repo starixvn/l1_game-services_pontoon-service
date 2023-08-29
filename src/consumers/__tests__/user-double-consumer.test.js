@@ -57,7 +57,7 @@ const mockInGamePlayer = () => ({
 });
 
 beforeEach(() => {
-    definition = new PontoonGameDefinition(gameSettings);
+    definition = new PontoonGameDefinition(gameSettings, null, null, gameSettings.actions, gameSettings.payouts);
     gameData = new PontoonGameData(gameSettings.durations.wholeRound);
     gameData.gameConfigs = {
         enabled: true,
@@ -96,7 +96,7 @@ describe("consume test", () => {
         });
     });
 
-    it("invalid payload, publish error to user, not updating betTracs", async () => {
+    it("invalid payload, publish error to user, not updating betTracks", async () => {
         const payload = {
             double: {
                 id: 200,
@@ -127,6 +127,61 @@ describe("validation test", () => {
         const result = await consumer.composeActionValidationCriteria(player, payload);
 
         expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.handIsStand } });
+    });
+
+    it("hand has double action, return correct error", async () => {
+        const payload = {
+            double: {
+                id: 100,
+            },
+        };
+
+        const ingamePlayer = mockInGamePlayer();
+        gameData.ingame[player.profile.name] = ingamePlayer;
+        ingamePlayer.betTracks.hands[0].isStand = false;
+        ingamePlayer.betTracks.hands[0].actions.push(gameSettings.actions.double);
+
+        const result = await consumer.composeActionValidationCriteria(player, payload);
+
+        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
+    });
+
+    it("cannot double when have 5 cards, return correct error", async () => {
+        const payload = {
+            double: {
+                id: 100,
+            },
+        };
+        const cards = [
+            {
+                rank: "10",
+                suit: 0,
+            },
+            {
+                rank: "5",
+                suit: 0,
+            },
+            {
+                rank: "2",
+                suit: 1,
+            },
+            {
+                rank: "6",
+                suit: 0,
+            },
+            {
+                rank: "2",
+                suit: 0,
+            },
+        ];
+        const ingamePlayer = mockInGamePlayer();
+        gameData.ingame[player.profile.name] = ingamePlayer;
+        ingamePlayer.betTracks.hands[0].isStand = false;
+        ingamePlayer.betTracks.hands[0].cards = cards;
+
+        const result = await consumer.composeActionValidationCriteria(player, payload);
+
+        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
     });
 
     it("invalid hand id, return correct error", async () => {

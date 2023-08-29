@@ -89,7 +89,7 @@ describe("consume test", () => {
         });
     });
 
-    it("invalid payload, publish error to user, not updating betTracs", async() => {
+    it("invalid payload, publish error to user, not updating betTracks", async () => {
         const payload = {
             hit: {
                 id: 200,
@@ -105,7 +105,77 @@ describe("consume test", () => {
     });
 });
 describe("validation test", () => {
-    it("hand is stand, return correct error", async() => {
+    it("cannot hit when busted, return correct error", async () => {
+        const payload = {
+            hit: {
+                id: 100,
+            },
+        };
+        const cards = [
+            {
+                rank: "10",
+                suit: 0,
+            },
+            {
+                rank: "2",
+                suit: 0,
+            },
+            {
+                rank: "J",
+                suit: 1,
+            },
+        ];
+        const ingamePlayer = mockInGamePlayer();
+        gameData.ingame[player.profile.name] = ingamePlayer;
+        ingamePlayer.betTracks.hands[0].isStand = true;
+        ingamePlayer.betTracks.hands[0].actions.push(gameSettings.actions.hit);
+        ingamePlayer.betTracks.hands[0].cards = cards;
+
+        const result = await consumer.composeActionValidationCriteria(player, payload);
+
+        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantHit } });
+    });
+
+    it("cannot hit when have 5 cards, return correct error", async () => {
+        const payload = {
+            hit: {
+                id: 100,
+            },
+        };
+        const cards = [
+            {
+                rank: "3",
+                suit: 0,
+            },
+            {
+                rank: "4",
+                suit: 0,
+            },
+            {
+                rank: "3",
+                suit: 1,
+            },
+            {
+                rank: "5",
+                suit: 0,
+            },
+            {
+                rank: "6",
+                suit: 1,
+            },
+        ];
+        const ingamePlayer = mockInGamePlayer();
+        gameData.ingame[player.profile.name] = ingamePlayer;
+        ingamePlayer.betTracks.hands[0].isStand = false;
+        ingamePlayer.betTracks.hands[0].actions.push(gameSettings.actions.hit);
+        ingamePlayer.betTracks.hands[0].cards = cards;
+
+        const result = await consumer.composeActionValidationCriteria(player, payload);
+
+        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantHit } });
+    });
+
+    it("hand is stand, return correct error", async () => {
         const payload = {
             hit: {
                 id: 100,
@@ -122,7 +192,7 @@ describe("validation test", () => {
         expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.handIsStand } });
     });
 
-    it("invalid hand id, return correct error", async() => {
+    it("invalid hand id, return correct error", async () => {
         const payload = {
             hit: {
                 id: 120,

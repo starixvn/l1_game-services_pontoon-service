@@ -29,10 +29,7 @@ export default class UserDoubleConsumer extends BaseActionConsumer {
         if (selectedHand) {
             criteria.push(
                 {
-                    failure:
-                        betTracks.hands.some((hand) => hand.splitFrom === selectedHand.id) ||
-                        selectedHand.splitFrom ||
-                        selectedHand.actions.includes(this.definition.actions.double),
+                    failure: selectedHand.actions.includes(this.definition.actions.double) || selectedHand.cards.length > 4,
                     notice: this.getNoticeObj(noticeHelper.cantDoubleHand),
                 },
                 {

@@ -13,7 +13,7 @@ export default class UserHitConsumer extends BaseActionConsumer {
         if (hand) {
             criteria.push(
                 {
-                    failure: calculate(hand.cards).some((currentHand) => currentHand >= constants.pontoon),
+                    failure: calculate(hand.cards).some((currentHand) => currentHand >= constants.pontoon) || hand.cards.length > 4,
                     notice: this.getNoticeObj(noticeHelper.cantHit),
                 },
                 {
