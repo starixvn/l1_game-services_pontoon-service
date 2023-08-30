@@ -36,6 +36,7 @@ export default class SettleGameConsumer extends Core.BaseEventConsumers.SettleGa
         await this.settleBets({ ...finish, playerName, playerUID: betTrack.uid });
 
         await gameNotifications.deleteOne({ uid: betTrack.uid, gameId: this.definition.id });
+        delete this.gameData.settlementResultFromAdmin[playerName];
     }
 
     async queryBets(roundId) {

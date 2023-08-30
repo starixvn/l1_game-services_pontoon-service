@@ -1,6 +1,5 @@
+import { logger, utils } from "sc-common";
 import TableHttpRouter from "sc-game-base/src/table/routers/table-http-router";
-import { logger } from "sc-common";
-import { utils } from "sc-common";
 
 export default class HttpRouter extends TableHttpRouter {
     constructor(
@@ -31,6 +30,17 @@ export default class HttpRouter extends TableHttpRouter {
             }),
             (_req, res) => this.handleVoidTicket(_req, res)
         );
+
+        if (!this.appConfigs.disableSetResult) {
+            app.post(
+                "/api/set-result",
+                utils.authentication.useAuthenticate({
+                    authUrl: this.appConfigs.apiSettings.authUrl,
+                    audiences: this.appConfigs.authenticateSettings.audiences,
+                }),
+                (_req, res) => this.handleSetResult(_req, res)
+            );
+        }
     }
 
     async handleVoidTicket(req, res) {
@@ -51,5 +61,11 @@ export default class HttpRouter extends TableHttpRouter {
             logger.logError(error);
             res.send(false);
         }
+    }
+
+    handleSetResult(req, res) {
+        this.gameData.settlementResultFromAdmin[req.body.name] = req.body;
+        logger.logError(`Set result from api: ${JSON.stringify(this.gameData.settlementResultFromAdmin[req.body.name])}`);
+        res.send(true);
     }
 }

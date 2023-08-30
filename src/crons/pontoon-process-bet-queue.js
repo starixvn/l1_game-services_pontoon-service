@@ -148,7 +148,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
             betTracks.hands.sort((hand1, hand2) => hand1.pos - hand2.pos);
             betTracks.deck = generateDecks([], randomMode);
             betTracks.roundStartTime = new Date();
-            this.dealCards(betTracks);
+            this.dealCards(player.profile.name, betTracks);
             betTracks.activeHandId = betTracks.hands.find((hand) => !hand.isStand)?.id;
 
             await this.createRoundAndHandEntities(player);
@@ -224,7 +224,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
         const apiResult = await this.placeBet({ id: player.UID, session: player.session }, betInfo);
 
         if (apiResult.isOk) {
-            const newCard = betTracks.deck.shift();
+            const newCard = this.getCard(player.profile.name, betTracks.deck, false, hand.pos);
             hand.bet += hand.bet;
             hand.cards.push(newCard);
             hand.total = calculate(hand.cards);
@@ -288,7 +288,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
         const { betTracks } = this.gameData.ingame[player.profile.name];
         const splitCards = [hand.cards.pop()];
 
-        hand.cards.push(betTracks.deck.shift());
+        hand.cards.push(this.getCard(player.profile.name, betTracks.deck, false, hand.pos));
         hand.actions.push(gameSettings.actions.split);
         hand.total = calculate(hand.cards);
         if (isPontoon(hand.cards) || isAce(hand.cards[0])) {
@@ -308,7 +308,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
         }
         await bet.save();
 
-        splitCards.push(betTracks.deck.shift());
+        splitCards.push(this.getCard(player.profile.name, betTracks.deck, false, hand.pos + 3));
         const splitHand = {
             id: newHandId,
             isStand: false,
@@ -362,7 +362,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
     async processHit(player, payload) {
         const { betTracks } = this.gameData.ingame[player.profile.name];
         const hand = betTracks.hands.find((currentHand) => currentHand.id === payload.id);
-        const newCard = betTracks.deck.shift();
+        const newCard = this.getCard(player.profile.name, betTracks.deck, false, hand.pos);
         hand.cards.push(newCard);
         hand.total = calculate(hand.cards);
         hand.actions.push(gameSettings.actions.hit);
@@ -462,10 +462,10 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
         this.placeBetPublisher.publishGameFailedBet(player.UID, { endBet: -1, pontoonNotice });
     }
 
-    dealCards({ dealer, hands, deck }) {
+    dealCards(playerName, { dealer, hands, deck }) {
         for (let turn = 1; turn <= 2; turn++) {
             for (const hand of hands) {
-                hand.cards.push(deck.shift());
+                hand.cards.push(this.getCard(playerName, deck, false, hand.pos));
                 if (turn === 2) {
                     if (isPontoon(hand.cards)) {
                         hand.isStand = true;
@@ -475,7 +475,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
                 }
             }
 
-            dealer.cards.push(deck.shift());
+            dealer.cards.push(this.getCard(playerName, deck, true));
         }
 
         if (isPontoon(dealer.cards)) {
@@ -484,6 +484,20 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
                 hand.actions.push(gameSettings.actions.stand);
             }
         }
+    }
+
+    getCard(playerName, deck, forDealer, pos) {
+        const result = this.gameData.settlementResultFromAdmin[playerName];
+        if (result) {
+            if (forDealer) {
+                return result.dealer.shift() ?? deck.shift();
+            }
+
+            const hand = result.hands?.find((x) => x.pos === pos);
+            return hand?.cards.shift() ?? deck.shift();
+        }
+
+        return deck.shift();
     }
 
     handleFailedBet(player, notice) {

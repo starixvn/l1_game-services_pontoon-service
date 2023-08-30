@@ -1,5 +1,5 @@
 import { logger } from "sc-common";
-
+import constants from "../constants";
 import gameSettings from "../game-settings";
 import noticeHelper from "../helpers/notice-helper";
 import BaseActionConsumer from "./base-action-consumer";
@@ -33,7 +33,7 @@ export default class UserDoubleConsumer extends BaseActionConsumer {
                         selectedHand.actions.includes(this.definition.actions.double) ||
                         betTracks.hands.some((hand) => hand.splitFrom === selectedHand.id) ||
                         !!selectedHand.splitFrom ||
-                        selectedHand.cards.length > 4,
+                        selectedHand.cards.length >= constants.maxCardsOnHand,
                     notice: this.getNoticeObj(noticeHelper.cantDoubleHand),
                 },
                 {
