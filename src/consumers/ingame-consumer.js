@@ -33,7 +33,7 @@ export default class InGameConsumer extends Core.BaseEventConsumers.InGameConsum
                 ? {
                       roundId: betTracks.roundId,
                       totalAmount,
-                      dealer: [betTracks.dealer.cards[0]],
+                      dealer: [],
                       hands: betTracks.hands,
                   }
                 : {};
