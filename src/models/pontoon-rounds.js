@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const modelName = "Pontoon_phien";
+const modelName = "pontoon_round";
 
 const Schema = new mongoose.Schema({
     result: { type: Array },
