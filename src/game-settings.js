@@ -15,7 +15,7 @@ export default {
     },
     payouts: {
         pontoon: "pontoon",
-        fiveCardTrick: "fivecardtrick",
+        fiveCardTrick: "fiveCardTrick",
         regular: "regular",
     },
     posOrder: [1, 4, 2, 5, 3, 6]
