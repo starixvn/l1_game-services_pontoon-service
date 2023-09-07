@@ -157,7 +157,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
                     roundId: betTracks.roundId,
                     totalAmount: totalBet,
                     uid: player.UID,
-                    dealer: [],
+                    dealer: isPontoon(betTracks.dealer.cards) ? betTracks.dealer.cards : [],
                     hands: betTracks.hands,
                 },
                 endBet: totalBet,
