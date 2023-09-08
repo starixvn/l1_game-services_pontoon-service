@@ -27,7 +27,7 @@ describe("generateResult()", () => {
 
         tests.forEach((test) => {
             const deck = Deck.generateDecks([...test.dealer, { rank: "J", suit: 1 }, { rank: "7", suit: 1 }]);
-            expect(Dealer.generateResult(test.dealer, deck).settlementResult).toBeGreaterThanOrEqual(constants.minDealerHand);
+            expect(Dealer.generateResult(test.dealer, deck, false, []).settlementResult).toBeGreaterThanOrEqual(constants.minDealerHand);
         });
     });
 
