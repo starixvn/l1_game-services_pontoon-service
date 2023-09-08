@@ -228,7 +228,6 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
             hand.bet += hand.bet;
             hand.cards.push(newCard);
             hand.total = calculate(hand.cards);
-            hand.isStand = true;
             hand.actions.push(gameSettings.actions.double);
 
             const bet = await this.betsRepository.findOne({ id: hand.id }).exec();
@@ -238,7 +237,7 @@ export default class PontoonProcessBetQueue extends ProcessBetQueue {
             bet.softPoints = calculate(hand.cards);
             bet.actions.push(gameSettings.actions.double);
 
-            if (bet.cards.length === constants.maxCardsOnHand) {
+            if (bet.cards.length === constants.maxCardsOnHand || bet.total >= constants.pontoon) {
                 hand.isStand = true;
                 hand.actions.push(gameSettings.actions.stand);
                 bet.actions.push(gameSettings.actions.stand);
