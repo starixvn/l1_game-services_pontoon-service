@@ -2,7 +2,7 @@ import constants from "./../constants";
 import gameSettings from "./../game-settings";
 import { calculateFinalValue, isBust, isFiveCardTrick, isPontoon } from "./card-helper";
 
-export const generateResult = (dealerCards, decks, isUpCard) => {
+export const generateResult = (dealerCards, decks, isUpCard, preGeneratedCards) => {
     let settlementResult = calculateFinalValue(dealerCards);
 
     if (isUpCard) {
@@ -11,7 +11,7 @@ export const generateResult = (dealerCards, decks, isUpCard) => {
     }
 
     while (settlementResult < constants.minDealerHand && dealerCards.length < constants.maxCardsOnHand) {
-        dealerCards.push(decks.shift());
+        dealerCards.push(preGeneratedCards.shift() ?? decks.shift());
         settlementResult = calculateFinalValue(dealerCards);
     }
 
