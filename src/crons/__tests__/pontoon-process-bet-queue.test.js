@@ -198,6 +198,7 @@ describe("process double tests", () => {
 
         expect(hand.actions).toContain(gameSettings.actions.double);
         expect(hand.bet).toEqual(200);
+        expect(hand.isStand).toBeFalse();
         expect(hand.cards).toHaveLength(3);
         expect(placeBetPublisher.publishToUser).toHaveBeenCalled();
     });

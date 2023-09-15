@@ -30,8 +30,12 @@ export const settle = (dealerCards, bet, odds) => {
         return odds[gameSettings.payouts.pontoon];
     }
 
+    const delearHasFiveCardTrick = isFiveCardTrick(dealerCards);
+
     if (isFiveCardTrick(bet.cards)) {
-        return isFiveCardTrick(dealerCards) ? 0 : odds[gameSettings.payouts.fiveCardTrick];
+        return delearHasFiveCardTrick ? 0 : odds[gameSettings.payouts.fiveCardTrick];
+    } else if (delearHasFiveCardTrick) {
+        return 0;
     }
 
     return isBust(dealerCards) || totalHandValue > totalOfDealer ? odds[gameSettings.payouts.regular] : 0;
