@@ -27,19 +27,13 @@ describe("generateResult()", () => {
 
         tests.forEach((test) => {
             const deck = Deck.generateDecks([...test.dealer, { rank: "J", suit: 1 }, { rank: "7", suit: 1 }]);
-            expect(Dealer.generateResult(test.dealer, deck, false, []).settlementResult).toBeGreaterThanOrEqual(constants.minDealerHand);
+            const result = Dealer.generateResult(test.dealer, deck, false, []);
+            expect(result.settlementResult).toBeGreaterThanOrEqual(constants.minDealerHardPoint);
         });
     });
 
-    it("should not deal since it reached min value of dealer", () => {
+    it("should not deal since hard point reached min value of dealer", () => {
         const tests = [
-            {
-                dealer: [
-                    { rank: "A", suit: 1 },
-                    { rank: "6", suit: 1 },
-                ],
-                total: 17,
-            },
             {
                 dealer: [
                     { rank: "10", suit: 1 },
@@ -81,6 +75,19 @@ describe("generateResult()", () => {
             const deck = Deck.generateDecks([...test.dealer, { rank: "J", suit: 1 }, { rank: "7", suit: 1 }]);
             expect(Dealer.generateResult(test.dealer, deck).settlementResult).toEqual(test.total);
         });
+    });
+
+    it("should deal if soft point is less than 18", () => {
+        //Arrange
+        const dealer = [
+            { rank: "A", suit: 1 },
+            { rank: "6", suit: 1 },
+        ];
+        const decks = Deck.generateDecks(dealer, 1);
+        //Act
+        const result = Dealer.generateResult(dealer, decks, false, []);
+        //Assert
+        expect(result.result.length).toBeGreaterThan(2);
     });
 });
 

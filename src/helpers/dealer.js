@@ -1,21 +1,24 @@
 import constants from "./../constants";
 import gameSettings from "./../game-settings";
-import { calculateFinalValue, isBust, isFiveCardTrick, isPontoon } from "./card-helper";
+import { calculate, calculateFinalValue, isBust, isFiveCardTrick, isPontoon } from "./card-helper";
 
-export const generateResult = (dealerCards, decks, isUpCard, preGeneratedCards) => {
-    let settlementResult = calculateFinalValue(dealerCards);
-
+export const generateResult = (dealerCards, decks, isUpCard, preGeneratedCards = []) => {
     if (isUpCard) {
-        settlementResult = calculateFinalValue(dealerCards);
-        return { result: dealerCards, settlementResult };
+        return { result: dealerCards, settlementResult: calculateFinalValue(dealerCards) };
     }
 
-    while (settlementResult < constants.minDealerHand && dealerCards.length < constants.maxCardsOnHand) {
+    let points = calculate(dealerCards);
+
+    while (
+        ((points.at(-1) < constants.minDealerHardPoint && points.length === 1) ||
+            (points.length > 1 && points.at(-1) < constants.minDealerSoftPoint)) &&
+        dealerCards.length < constants.maxCardsOnHand
+    ) {
         dealerCards.push(preGeneratedCards.shift() ?? decks.shift());
-        settlementResult = calculateFinalValue(dealerCards);
+        points = calculate(dealerCards);
     }
 
-    return { result: dealerCards, settlementResult };
+    return { result: dealerCards, settlementResult: points.at(-1) };
 };
 
 export const settle = (dealerCards, bet, odds) => {

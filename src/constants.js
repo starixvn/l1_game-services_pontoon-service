@@ -1,5 +1,6 @@
 export default {
-    minDealerHand: 17,
+    minDealerHardPoint: 17,
+    minDealerSoftPoint: 18,
     pontoon: 21,
     reduceValueOfAce: 10,
     minPlayerHand: 1,
