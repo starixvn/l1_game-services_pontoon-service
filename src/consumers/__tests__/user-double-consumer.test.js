@@ -184,7 +184,7 @@ describe("validation test", () => {
         expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
     });
 
-    it("hand main has split action, return correct error", async () => {
+    it("hand main has split action, allow splitting", async () => {
         const payload = {
             double: {
                 id: 9237064,
@@ -195,6 +195,10 @@ describe("validation test", () => {
             isStand: false,
             actions: [gameSettings.actions.split],
             id: 9237064,
+            cards: [
+                { rank: "5", suit: 0 },
+                { rank: "5", suit: 1 },
+            ],
         };
 
         const hand2 = {
@@ -210,10 +214,10 @@ describe("validation test", () => {
 
         const result = await consumer.composeActionValidationCriteria(player, payload);
 
-        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
+        expect(result).not.toContain({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
     });
 
-    it("hand is extra, return correct error", async () => {
+    it("hand is extra, allow splitting", async () => {
         const payload = {
             double: {
                 id: 9237066,
@@ -225,6 +229,10 @@ describe("validation test", () => {
             actions: [],
             id: 9237066,
             splitFrom: 9237064,
+            cards: [
+                { rank: "5", suit: 0 },
+                { rank: "6", suit: 1 },
+            ],
         };
 
         const ingamePlayer = mockInGamePlayer();
@@ -233,7 +241,7 @@ describe("validation test", () => {
 
         const result = await consumer.composeActionValidationCriteria(player, payload);
 
-        expect(result).toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
+        expect(result).not.toContainEqual({ failure: true, notice: { errorCode: noticeHelper.cantDoubleHand } });
     });
 
     it("invalid hand id, return correct error", async () => {
