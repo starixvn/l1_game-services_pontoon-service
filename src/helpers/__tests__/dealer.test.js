@@ -93,7 +93,7 @@ describe("generateResult()", () => {
 
 describe("settle()", () => {
     const odds = { regular: 2, pontoon: 3.5 };
-    it("should return 0 if both dealer and player are pontoon", () => {
+    it("should return 0 if both dealer and player are pontoon", async () => {
         const test = {
             dealer: [
                 { rank: "J", suit: 1 },
@@ -107,10 +107,10 @@ describe("settle()", () => {
                 ],
             },
         };
-        expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
+        expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
     });
 
-    it("should return pontoon odds if player is pontoon but dealer is not", () => {
+    it("should return pontoon odds if player is pontoon but dealer is not", async () => {
         const tests = [
             {
                 dealer: [
@@ -127,12 +127,12 @@ describe("settle()", () => {
             },
         ];
 
-        tests.forEach((test) => {
-            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.pontoon);
+        tests.forEach(async (test) => {
+            expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.pontoon);
         });
     });
 
-    it("should return pontoon odds if player is pontoon but splitted", () => {
+    it("should return pontoon odds if player is pontoon but splitted", async () => {
         const tests = [
             {
                 dealer: [
@@ -162,12 +162,12 @@ describe("settle()", () => {
                 },
             },
         ];
-        tests.forEach((test) => {
-            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.pontoon);
+        tests.forEach(async (test) => {
+            expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.pontoon);
         });
     });
 
-    it("should return 0 if player is bust", () => {
+    it("should return 0 if player is bust", async () => {
         const tests = [
             {
                 dealer: [
@@ -200,12 +200,12 @@ describe("settle()", () => {
             },
         ];
 
-        tests.forEach((test) => {
-            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
+        tests.forEach(async (test) => {
+            expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
         });
     });
 
-    it("should return regular odds if player is greater than dealer and not bust", () => {
+    it("should return regular odds if player is greater than dealer and not bust", async () => {
         const tests = [
             {
                 dealer: [
@@ -251,8 +251,31 @@ describe("settle()", () => {
             },
         ];
 
-        tests.forEach((test) => {
-            expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.regular);
+        tests.forEach(async (test) => {
+            expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.regular);
+        });
+    });
+
+    it("should return regular odds if player is less than 21 and dealer is busted", async () => {
+        const tests = [
+            {
+                dealer: [
+                    { rank: "6", suit: 1 },
+                    { rank: "7", suit: 1 },
+                    { rank: "K", suit: 1 },
+                ],
+                bet: {
+                    actions: [],
+                    cards: [
+                        { rank: "J", suit: 1 },
+                        { rank: "7", suit: 1 },
+                    ],
+                },
+            },
+        ];
+
+        tests.forEach(async (test) => {
+            expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.regular);
         });
     });
 
@@ -284,9 +307,9 @@ describe("settle()", () => {
                 ],
             },
         },
-    ])("should return 0 if both dealer and player are the same", (test) => {
+    ])("should return 0 if both dealer and player are the same", async (test) => {
         const odds = { regular: 2, pontoon: 3.5 };
-        expect(Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
+        expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
     });
 });
 
