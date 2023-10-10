@@ -92,7 +92,8 @@ describe("generateResult()", () => {
 });
 
 describe("settle()", () => {
-    const odds = { regular: 2, pontoon: 3.5 };
+    const odds = { regular: 2, pontoon: 3.5, fiveCardTrick: 2.5 };
+
     it("should return 0 if both dealer and player are pontoon", async () => {
         const test = {
             dealer: [
@@ -252,7 +253,11 @@ describe("settle()", () => {
         ];
 
         tests.forEach(async (test) => {
-            expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(odds.regular);
+            // Act
+            const result = await Dealer.settle(test.dealer, test.bet, odds);
+
+            // Assert
+            expect(result).toEqual(odds.regular);
         });
     });
 
@@ -308,8 +313,43 @@ describe("settle()", () => {
             },
         },
     ])("should return 0 if both dealer and player are the same", async (test) => {
-        const odds = { regular: 2, pontoon: 3.5 };
-        expect(await Dealer.settle(test.dealer, test.bet, odds)).toEqual(0);
+        // Arrange
+        const odds = { regular: 2, pontoon: 3.5, fiveCardTrick: 2.5 };
+
+        // Act
+        const result = await Dealer.settle(test.dealer, test.bet, odds);
+
+        // Assert
+        expect(result).toEqual(0);
+    });
+
+    it("should return fiveCardsTrick odds if player is fiveCardsTrick", async () => {
+        const tests = [
+            {
+                dealer: [
+                    { rank: "7", suit: 1 },
+                    { rank: "K", suit: 1 },
+                ],
+                bet: {
+                    actions: [],
+                    cards: [
+                        { rank: "2", suit: 1 },
+                        { rank: "3", suit: 1 },
+                        { rank: "2", suit: 1 },
+                        { rank: "2", suit: 1 },
+                        { rank: "2", suit: 1 },
+                    ],
+                },
+            },
+        ];
+
+        tests.forEach(async (test) => {
+            // Act
+            const result = await Dealer.settle(test.dealer, test.bet, odds);
+
+            // Assert
+            expect(result).toEqual(odds.fiveCardTrick);
+        });
     });
 });
 

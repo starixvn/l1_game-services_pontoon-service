@@ -1,6 +1,7 @@
 import constants from "./../constants";
 import gameSettings from "./../game-settings";
 import { calculate, calculateFinalValue, isBust, isFiveCardTrick, isPontoon } from "./card-helper";
+import { busted, fiveCardsDealer, fiveCardsPlayer, pontoonDealer, pontoonPlayer, higherPlayer } from "./rules";
 
 import { Engine, Rule } from "json-rules-engine";
 
@@ -34,160 +35,28 @@ export const settle = async (dealerCards, bet, odds) => {
         totalDealerCards: dealerCards.length,
     };
 
-    const dealerWin = {
-        conditions: {
-            any: [
-                {
-                    fact: "totalHandValue",
-                    operator: "greaterThan",
-                    value: 21,
-                },
-                {
-                    fact: "totalOfDealer",
-                    operator: "equal",
-                    value: 21,
-                },
-                {
-                    all: [
-                        {
-                            fact: "totalOfDealer",
-                            operator: "greaterThanInclusive",
-                            value: {
-                                fact: "totalHandValue",
-                            },
-                        },
-                        {
-                            fact: "totalOfDealer",
-                            operator: "lessThanInclusive",
-                            value: 21,
-                        },
-                    ],
-                },
-                {
-                    fact: "totalDealerCards",
-                    operator: "equal",
-                    value: 5,
-                },
-            ],
-            not: [
-                {
-                    fact: "totalOfDealer",
-                    operator: "greaterThan",
-                    value: {
-                        fact: 21,
-                    },
-                },
-            ],
-        },
-        event: {
-            type: "dealer-win",
-            params: {
-                odds: 0,
-            },
-        },
-        priority: 2,
-    };
-
-    //TODO player win with regular odds
-    const playerRegularOdds = {
-        conditions: {
-            any: [
-                {
-                    fact: "totalHandValue",
-                    operator: "greaterThan",
-                    value: {
-                        fact: "totalOfDealer",
-                    },
-                },
-                {
-                    fact: "totalOfDealer",
-                    operator: "greaterThan",
-                    value: 21,
-                },
-            ],
-            not: [
-                {
-                    fact: "totalHandValue",
-                    operator: "lessThan",
-                    value: 21,
-                },
-            ],
-        },
-        event: {
-            type: "player-win-regular",
-            params: {
-                odds: odds[gameSettings.payouts.regular],
-            },
-        },
-    };
-
-    //TODO player win with pontoon odds
-    const playerPonToonOdds = {
-        conditions: {
-            all: [
-                {
-                    fact: "totalHandValue",
-                    operator: "equal",
-                    value: 21,
-                },
-                {
-                    fact: "totalHandCards",
-                    operator: "equal",
-                    value: 2,
-                },
-            ],
-        },
-        event: {
-            type: "player-win-pontoon",
-            params: {
-                odds: odds[gameSettings.payouts.pontoon],
-            },
-        },
-    };
-    //TODO player win with five-cards-trickk odds?!?
-    const playerFiveCardsOdds = {
-        conditions: {
-            all: [
-                {
-                    fact: "totalHandValue",
-                    operator: "lessThan",
-                    value: 21,
-                },
-                {
-                    fact: "totalHandCards",
-                    operator: "equal",
-                    value: 5,
-                },
-            ],
-        },
-        event: {
-            type: "player-win-fivecards",
-            params: {
-                odds: odds[gameSettings.payouts.fiveCardTrick],
-            },
-        },
-    };
-
     const engine = new Engine();
 
-    engine.addRule(new Rule(dealerWin));
-    const dealerWins = await engine.run(facts);
+    engine.addRule(new Rule(busted));
+    engine.addRule(new Rule(fiveCardsDealer));
+    engine.addRule(new Rule(fiveCardsPlayer));
+    engine.addRule(new Rule(pontoonDealer));
+    engine.addRule(new Rule(pontoonPlayer));
+    engine.addRule(new Rule(higherPlayer));
 
-    if (dealerWins.events.length > 0) {
-        const event = dealerWins.events.pop();
-        return event.params.odds;
-    }
+    const ruleResults = await engine.run(facts);
 
-    const playerEngine = new Engine();
+    if (ruleResults.events.length > 0) {
+        console.log(ruleResults.events);
+        const dealerWins = ruleResults.events.filter((e) => e.type === "dealer");
 
-    playerEngine.addRule(new Rule(playerPonToonOdds));
-    playerEngine.addRule(new Rule(playerFiveCardsOdds));
-    playerEngine.addRule(new Rule(playerRegularOdds));
+        if (dealerWins.length > 0) {
+            return dealerWins.pop().params.odds;
+        }
 
-    const playerWins = await playerEngine.run(facts);
+        const playerWins = ruleResults.events.filter((e) => e.type === "player");
+        const odds = playerWins.map((e) => e.params.odds);
 
-    if (playerWins.events.length > 0) {
-        const odds = playerWins.events.map((event) => event.params.odds);
         return Math.max(...odds);
     }
 
