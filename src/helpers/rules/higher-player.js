@@ -16,10 +16,10 @@ export const higherPlayer = {
         ],
     },
     event: {
-        type: "player",
+        type: "settle",
         params: {
-            message: "hand-higher",
-            odds: 2,
+            winner: "player",
+            oddsType: "regular",
         },
     },
 };

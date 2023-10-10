@@ -47,17 +47,16 @@ export const settle = async (dealerCards, bet, odds) => {
     const ruleResults = await engine.run(facts);
 
     if (ruleResults.events.length > 0) {
-        console.log(ruleResults.events);
-        const dealerWins = ruleResults.events.filter((e) => e.type === "dealer");
+        const dealerWins = ruleResults.events.filter((e) => e.params.winner === "dealer");
 
         if (dealerWins.length > 0) {
-            return dealerWins.pop().params.odds;
+            return 0;
         }
 
-        const playerWins = ruleResults.events.filter((e) => e.type === "player");
-        const odds = playerWins.map((e) => e.params.odds);
+        const playerWins = ruleResults.events.filter((e) => e.params.winner === "player");
+        const oddsReturn = playerWins.map((e) => odds[e.params.oddsType]);
 
-        return Math.max(...odds);
+        return Math.max(...oddsReturn);
     }
 
     return 0;

@@ -14,10 +14,10 @@ export const fiveCardsDealer = {
         ],
     },
     event: {
-        type: "dealer",
+        type: "settle",
         params: {
-            message: "five-cards",
-            odds: 0,
+            winner: "dealer",
+            oddsType: "loose",
         },
     },
 };
@@ -38,10 +38,10 @@ export const fiveCardsPlayer = {
         ],
     },
     event: {
-        type: "player",
+        type: "settle",
         params: {
-            message: "five-cards",
-            odds: 2.5,
+            winner: "player",
+            oddsType: "fiveCardTrick",
         },
     },
 };

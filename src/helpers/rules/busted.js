@@ -9,10 +9,10 @@ export const busted = {
         ],
     },
     event: {
-        type: "dealer",
+        type: "settle",
         params: {
-            message: "player-busted",
-            odds: 0,
+            winner: "dealer",
+            oddsType: "loose",
         },
     },
 };

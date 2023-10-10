@@ -14,10 +14,10 @@ export const pontoonDealer = {
         ],
     },
     event: {
-        type: "dealer",
+        type: "settle",
         params: {
-            message: "pontoon",
-            odds: 0,
+            winner: "dealer",
+            oddsType: "loose",
         },
     },
 };
@@ -38,10 +38,10 @@ export const pontoonPlayer = {
         ],
     },
     event: {
-        type: "player",
+        type: "settle",
         params: {
-            message: "pontoon",
-            odds: 3.5,
+            winner: "player",
+            oddsType: "pontoon",
         },
     },
 };
