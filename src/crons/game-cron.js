@@ -97,7 +97,7 @@ export default class GameCron extends Core.Crons.BaseGameCron {
         const { configName } = this.definition;
         const archiveStatus = await this.archiveStatusesRepository.findOne({ name: configName }, "lastArcId").lean().exec();
 
-        return archiveStatus ? archiveStatus.lastArcId["_cuocs"] + 1 : 1;
+        return archiveStatus ? archiveStatus.lastArcId["_bets"] + 1 : 1;
     }
 
     async initBetTracks() {
