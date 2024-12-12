@@ -2,8 +2,8 @@ export default {
     hostingPort: 5000,
     apiSettings: {
         enabledApi: true,
-        apiUrl: "http://l2_game_api_local_2:5000",
-        authUrl: "http://l2_auth_api_local_2:5000",
+        apiUrl: "http://l2-game-api-local2-service:5000",
+        authUrl: "http://l2-auth-api-local2-service:5000",
         client: {
             id: "game-server",
             secret: "gameserver@20luminet&",
@@ -32,10 +32,10 @@ export default {
     sentry: {
         sentryUrl: "https://acb36eb835d948d68c1aad9873754d51@sentry.lumigame.com/27",
         logIdentifier: "pontoon",
-        env: "LOCAL-2",
+        env: "LOCAL_2",
     },
     authenticateSettings: {
-        url: "http://l2_auth_api_local_2:5000",
+        url: "http://l2-auth-api-local2-service:5000",
         id: "game-services",
         secret: "gameservices@20luminet&",
         requestTimeout: 10000,
@@ -43,7 +43,7 @@ export default {
         audiences: ["api", "admin-api"],
     },
     userServiceSettings: {
-        url: "http://l2_user_service_local_2:5000",
+        url: "http://l2-user-service-local2-service:5000",
     },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     roundMaxDuration: 1,
