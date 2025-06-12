@@ -30,7 +30,7 @@ export default {
         },
     },
     sentry: {
-        sentryUrl: "https://f4980024f65945179a125e7ce17286d0@sentry.sabagame.com/178",
+        sentryUrl: "http://f4980024f65945179a125e7ce17286d0@10.2.189.50:9009/178",
         logIdentifier: "pontoon",
         env: "PROD",
     },
