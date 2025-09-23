@@ -18,7 +18,7 @@
     "dependencies": {
         "lodash.findindex": "^4.6.0",
         "lodash.sortby": "^4.7.0",
-        "sc-game-base": "4.1.0",
+        "sc-game-base": "4.2.0",
         "d3-array": "^3.2.0",
         "random-js": "^2.1.0"
     },
