@@ -155,9 +155,9 @@ export default class GameCron extends Core.Crons.BaseGameCron {
             }
         }
 
-        if (this.gameData.remainingTime < 0) {
+        if (this.gameData.remainingTime < 0 || (this.gameData.disabled && this.gameData.remainingTime === durations.wholeAction)) {
             this.gameData.remainingTime = durations.wholeAction;
-            const expiredDate = moment.utc().subtract(appConfigs.roundMaxDuration, "hours");
+            const expiredDate = moment.utc().subtract(appConfigs.roundMaxDuration, "minutes");
 
             await Promise.all(
                 Object.values(this.gameData.ingame)
