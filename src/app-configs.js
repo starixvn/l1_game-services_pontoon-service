@@ -45,5 +45,5 @@ export default {
         url: "http://127.0.0.1:5000",
     },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
-    roundMaxDuration: 1440,
+    roundMaxDuration: 5,
 };
